@@ -1,71 +1,71 @@
-Explanation of the program:
+Explanation of what the project is about:
 
-This is a Python program that acts as a secure, database-driven
- Online Shopping Portal run directly inside the terminal window.
-  It uses a relational database to separately manage what an 
-  administrator can do versus what a standard customer can do.
+This project is a modular, structured blueprint for a text-based 
+RPG (Role-Playing Game) called "Legends of the Forgotten Realm." 
+Written in Python, it breaks down the game into organized files 
+that work together to manage characters, combat, game data, and
+ player progress.
+ The game operates as an interconnected machine. One file holds 
+ the rules for characters, another acts as the database of items, 
+ a third runs the battle engine, a fourth handles saving and loading,
+  and a final central hub ties them all together into a playable loop.
 
-The Big Picture: How the Game Works
+Breakdown of Each Module
 
-The program works like a mini e-commerce website. It creates a
- structured database file on your computer, manages user accounts,
-  tracks warehouse inventory, and processes sales transactions. 
-  When you run it, you are presented with a gateway portal to 
-  register or log in, routing you to a customized dashboard based 
-  on whether your account is flagged as an Admin or a Customer.
+1. The Game Database (data.py)
 
-Breakdown of Each Component
+This file acts as the game's official reference encyclopedia. It contains
+ no functional gameplay logic, only static Python dictionaries and lists 
+ that store:
+• Character Classes: Starting health, mana, attack, and defense for the 
+Warrior, Mage, Archer, and Assassin.
+• Skill Trees: Special moves unlocked at higher levels, such as a Mage's
+ Fireball or an Assassin's Instant Kill.
+• Loot Tables: A massive list of weapons and armors separated by tier
+ rarities (Common all the way to Legendary) along with random drop 
+ percentages.
+• World Map and Bosses: The names of different regions (like the
+ Whispering Forest or Demon Realm) scaled by level, and the specific 
+ high-powered bosses guarding every 10th milestone.
 
+2. Character Blueprints (models.py)
 
-1. The Database Blueprint (init_db)
+This file defines the physical properties of the entities living 
+inside the game:
+• The Player: Sets up a level 1 hero. It features dynamic 
+calculators (@property) that automatically add your weapon's 
+attack power and your armor's defense value to your base stats
+ in real-time. It also handles permanent stat increases when you
+  gain enough EXP to trigger a level-up.
+• The Enemy: A flexible generator that spawns standard minions whose 
+stats scale based on your current region's difficulty, or overrides
+ everything to build hardcoded, high-HP boss encounters.
 
-This function sets up a local database file using SQLite. It 
-establishes three separate data tables that reference each 
-other using advanced safety rules:
-• Users Table: Stores names, passwords, and user types (Customer
- or Admin). It enforces uniqueness so two users cannot share the
-  same name.
-• Products Table: Stores items, prices, and quantities. It uses
- built-in checks to guarantee prices or stock levels can never 
- accidentally drop below zero.
-• Orders Table: A transaction log that links users to products. 
-It uses automated safety triggers so that if an admin deletes a 
+3. The Battle Engine (combat.py)
 
-product from the shop, all matching purchase histories for that
- product are cleaned up to prevent errors.
+This runs the active turn-based combat loop. When triggered, it locks
+ the player and a monster in a sequence of turns until someone's HP
+  hits zero. It handles player choices, like standard attacks (with 
+  a random percentage roll for high-damage critical hits), spending mana
+   on unlocked skills, drinking potions from an inventory pouch, 
+   or taking a defensive stance to cut the enemy's next strike in half.
 
-2. Input Gatekeepers (get_non_empty_input, get_positive_float, 
-get_positive_int)
+4. The Memory Core (system_save.py)
 
-These utilities act as rigorous filter checks for typed text. 
-They ensure that a user cannot accidentally pass blank spaces 
-as a password, enter a negative number for an item price, or 
-type regular text letters when the computer expects a whole 
-number for inventory count.
+This file prevents players from losing their hard-earned progress.
+• The Save function extracts the player's exact live status (current 
+level, current gold, equipped gear, and potions) and writes it into a
+ permanent text file called savegame.json.
+• The Load function reads that JSON file upon request and completely 
+rebuilds the player object back into memory so they can resume their 
+quest seamlessly.
 
-3. The Administrator Dashboard (admin_menu)
+5. The Main Control Hub (main.py)
 
-When a user logs in with an administrative profile, they gain 
-total control over the store's inventory. They have access to
- full create, read, update, and delete actions:
-• Create and Read: Add brand new items to the catalog and view
- the full warehouse spreadsheet with perfectly aligned vertical 
- columns.
-• Update and Delete: Change pricing or supply counts for an existing
- product number, or remove an item from the storefront completely.
-
-4. The Customer Storefront (customer_menu)
-
-When a standard customer logs in, they see a shopping platform 
-instead of a management layout:
-• Inventory Scanning: Browse what items are currently for sale 
-along with their prices and stock availability.
-• Stock Verification and Ordering: When a customer attempts to 
-purchase an item, the script runs a real-time query check. If the
- store has enough stock, it deducts the purchased amount from the
-  warehouse supplies and creates a fresh receipt entry in the 
-  transaction records. If the buyer asks for more than what is 
-  available, it gracefully blocks the order.
-• Order History Tracking: Pulls up a custom receipt sheet for that
- specific user ID, multiplying quantities by unit prices to show the
-  total cost spent on past transactions along with timestamps.
+The nervous system of the project. It links all four previous files
+ together using python import statements. It manages the primary title
+  screen (New Game, Continue, Exit), handles player choices in the 
+  main loop (Explore, Fight Boss, Visit Shop, Manage Gear), distributes
+   gold, EXP, and random loot drops upon victory, and gracefully 
+   closes the program via sys.exit() if you choose to quit or 
+   suffer a game over.
