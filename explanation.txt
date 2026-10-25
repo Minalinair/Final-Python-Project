@@ -1,0 +1,71 @@
+Explanation of the program:
+
+This is a Python program that acts as a secure, database-driven
+ Online Shopping Portal run directly inside the terminal window.
+  It uses a relational database to separately manage what an 
+  administrator can do versus what a standard customer can do.
+
+The Big Picture: How the Game Works
+
+The program works like a mini e-commerce website. It creates a
+ structured database file on your computer, manages user accounts,
+  tracks warehouse inventory, and processes sales transactions. 
+  When you run it, you are presented with a gateway portal to 
+  register or log in, routing you to a customized dashboard based 
+  on whether your account is flagged as an Admin or a Customer.
+
+Breakdown of Each Component
+
+
+1. The Database Blueprint (init_db)
+
+This function sets up a local database file using SQLite. It 
+establishes three separate data tables that reference each 
+other using advanced safety rules:
+• Users Table: Stores names, passwords, and user types (Customer
+ or Admin). It enforces uniqueness so two users cannot share the
+  same name.
+• Products Table: Stores items, prices, and quantities. It uses
+ built-in checks to guarantee prices or stock levels can never 
+ accidentally drop below zero.
+• Orders Table: A transaction log that links users to products. 
+It uses automated safety triggers so that if an admin deletes a 
+
+product from the shop, all matching purchase histories for that
+ product are cleaned up to prevent errors.
+
+2. Input Gatekeepers (get_non_empty_input, get_positive_float, 
+get_positive_int)
+
+These utilities act as rigorous filter checks for typed text. 
+They ensure that a user cannot accidentally pass blank spaces 
+as a password, enter a negative number for an item price, or 
+type regular text letters when the computer expects a whole 
+number for inventory count.
+
+3. The Administrator Dashboard (admin_menu)
+
+When a user logs in with an administrative profile, they gain 
+total control over the store's inventory. They have access to
+ full create, read, update, and delete actions:
+• Create and Read: Add brand new items to the catalog and view
+ the full warehouse spreadsheet with perfectly aligned vertical 
+ columns.
+• Update and Delete: Change pricing or supply counts for an existing
+ product number, or remove an item from the storefront completely.
+
+4. The Customer Storefront (customer_menu)
+
+When a standard customer logs in, they see a shopping platform 
+instead of a management layout:
+• Inventory Scanning: Browse what items are currently for sale 
+along with their prices and stock availability.
+• Stock Verification and Ordering: When a customer attempts to 
+purchase an item, the script runs a real-time query check. If the
+ store has enough stock, it deducts the purchased amount from the
+  warehouse supplies and creates a fresh receipt entry in the 
+  transaction records. If the buyer asks for more than what is 
+  available, it gracefully blocks the order.
+• Order History Tracking: Pulls up a custom receipt sheet for that
+ specific user ID, multiplying quantities by unit prices to show the
+  total cost spent on past transactions along with timestamps.
